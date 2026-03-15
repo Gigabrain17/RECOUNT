@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>RECOUNT — CLAIM YOUR PRIZE</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Bebas+Neue&family=Special+Elite&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --red: #cc0000;
+  --bright-red: #ff1a1a;
+  --black: #050505;
+  --dark: #0a0a0a;
+  --white: #f0f0f0;
+  --dim: #333;
+  --gold: #c9a84c;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: var(--black);
+  color: var(--white);
+  font-family: 'Share Tech Mono', monospace;
+  min-height: 100vh;
+  overflow-x: hidden;
+  cursor: crosshair;
+}
+body::after {
+  content: '';
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(200,0,0,0.02) 2px, rgba(200,0,0,0.02) 4px);
+  pointer-events: none; z-index: 999;
+}
+body::before {
+  content: '';
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background-image: linear-gradient(rgba(200,0,0,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(200,0,0,0.02) 1px, transparent 1px);
+  background-size: 50px 50px;
+  pointer-events: none; z-index: 0;
+}
+
+.page { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; padding: 3rem 2rem; }
+
+.top-bar { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1a0000; padding-bottom: 1rem; margin-bottom: 3rem; font-size: 0.65rem; letter-spacing: 0.3em; color: #330000; }
+.top-bar .live { color: var(–red); animation: blink 1.5s step-end infinite; }
+@keyframes blink { 0%,100%{opacity:1;}50%{opacity:0;} }
+
+.stamp { font-family: ‘Bebas Neue’, sans-serif; font-size: 0.8rem; letter-spacing: 0.5em; color: var(–red); border: 2px solid var(–red); padding: 0.3rem 1.5rem; display: inline-block; margin-bottom: 2rem; transform: rotate(-1.5deg); text-shadow: 0 0 10px rgba(200,0,0,0.5); box-shadow: 0 0 20px rgba(200,0,0,0.2); }
+
+.page-title { font-family: ‘Bebas Neue’, sans-serif; font-size: clamp(3rem, 8vw, 6rem); letter-spacing: 0.05em; line-height: 0.9; color: var(–white); margin-bottom: 0.5rem; }
+.page-title .red { color: var(–red); text-shadow: 0 0 30px rgba(200,0,0,0.5); }
+.page-sub { font-size: 0.7rem; letter-spacing: 0.3em; color: var(–dim); margin-bottom: 3rem; }
+
+/* TIMER */
+.timer-block {
+background: rgba(200,0,0,0.08);
+border: 1px solid rgba(200,0,0,0.4);
+padding: 1.5rem 2rem; margin-bottom: 2.5rem;
+display: flex; align-items: center; justify-content: space-between;
+flex-wrap: wrap; gap: 1rem;
+box-shadow: 0 0 30px rgba(200,0,0,0.1);
+}
+.timer-label { font-size: 0.65rem; letter-spacing: 0.3em; color: var(–red); }
+.timer-count { font-family: ‘Bebas Neue’, sans-serif; font-size: 2.5rem; color: var(–white); letter-spacing: 0.2em; }
+.timer-note { font-size: 0.65rem; letter-spacing: 0.15em; color: var(–dim); }
+
+/* MANIFESTO */
+.manifesto {
+border: 1px solid rgba(200,0,0,0.2);
+background: rgba(200,0,0,0.03);
+padding: 2rem; margin-bottom: 2.5rem;
+position: relative;
+}
+.manifesto::before { content: ‘// THE SEVENTH WITNESS SPEAKS’; position: absolute; top: -0.6rem; left: 1.5rem; background: var(–black); padding: 0 0.5rem; font-size: 0.6rem; letter-spacing: 0.3em; color: var(–red); }
+.manifesto-text { font-family: ‘Special Elite’, cursive; font-size: 1rem; line-height: 2.2; color: #888; }
+.manifesto-text strong { color: var(–white); }
+.manifesto-text .red { color: var(–red); }
+
+/* PRIZE TIERS */
+.prizes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: rgba(200,0,0,0.2); border: 1px solid rgba(200,0,0,0.2); margin-bottom: 2.5rem; }
+.prize-card { background: var(–dark); padding: 1.5rem; text-align: center; }
+.prize-rank { font-size: 0.6rem; letter-spacing: 0.3em; color: var(–dim); margin-bottom: 0.5rem; }
+.prize-amount { font-family: ‘Bebas Neue’, sans-serif; font-size: 2rem; display: block; margin-bottom: 0.3rem; }
+.prize-amount.gold { color: var(–gold); text-shadow: 0 0 15px rgba(201,168,76,0.4); }
+.prize-amount.silver { color: #aaa; }
+.prize-amount.bronze { color: #cd7f32; }
+.prize-note { font-size: 0.6rem; letter-spacing: 0.15em; color: var(–dim); }
+
+/* CLAIM FORM */
+.claim-form {
+border: 1px solid rgba(200,0,0,0.3);
+background: rgba(200,0,0,0.02);
+padding: 2rem; margin-bottom: 2.5rem;
+position: relative;
+}
+.claim-form::before { content: ‘// SUBMIT YOUR CLAIM — 30 MINUTE WINDOW’; position: absolute; top: -0.6rem; left: 1.5rem; background: var(–black); padding: 0 0.5rem; font-size: 0.6rem; letter-spacing: 0.3em; color: var(–red); }
+
+.form-group { margin-bottom: 1.5rem; }
+.form-label { font-size: 0.65rem; letter-spacing: 0.3em; color: var(–dim); margin-bottom: 0.5rem; display: block; }
+.form-input {
+width: 100%; background: transparent; border: 1px solid #1a0000;
+color: var(–white); font-family: ‘Share Tech Mono’, monospace;
+font-size: 0.85rem; padding: 0.8rem 1rem; outline: none;
+transition: border-color 0.2s;
+}
+.form-input:focus { border-color: var(–red); box-shadow: 0 0 15px rgba(200,0,0,0.15); }
+.form-input::placeholder { color: #333; }
+
+.form-note { font-size: 0.65rem; letter-spacing: 0.15em; color: #222; margin-top: 0.4rem; line-height: 1.6; }
+
+.submit-btn {
+width: 100%; background: var(–red); border: none;
+color: white; font-family: ‘Bebas Neue’, sans-serif;
+font-size: 1.4rem; letter-spacing: 0.3em; padding: 1.2rem;
+cursor: pointer; transition: all 0.2s;
+clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+box-shadow: 0 0 30px rgba(200,0,0,0.3);
+}
+.submit-btn:hover { background: var(–bright-red); box-shadow: 0 0 50px rgba(255,0,0,0.5); }
+
+.success-msg { display: none; color: #00ff41; font-size: 0.8rem; letter-spacing: 0.2em; margin-top: 1rem; text-align: center; line-height: 1.8; padding: 1rem; border: 1px solid #00ff41; background: rgba(0,255,65,0.05); }
+
+/* INSTRUCTIONS */
+.instructions {
+border-left: 3px solid var(–red);
+padding-left: 1.5rem; margin-bottom: 2.5rem;
+}
+.inst-title { font-size: 0.65rem; letter-spacing: 0.3em; color: var(–red); margin-bottom: 1rem; }
+.inst-step { font-size: 0.85rem; color: #666; line-height: 2; margin-bottom: 0.5rem; }
+.inst-step span { color: var(–white); }
+
+/* LEADERBOARD */
+.leaderboard {
+border: 1px solid rgba(200,0,0,0.2);
+background: rgba(200,0,0,0.02);
+padding: 2rem; margin-bottom: 2.5rem;
+position: relative;
+}
+.leaderboard::before { content: ‘// THE COUNTERS — HALL OF THE SIXTH’; position: absolute; top: -0.6rem; left: 1.5rem; background: var(–black); padding: 0 0.5rem; font-size: 0.6rem; letter-spacing: 0.3em; color: var(–red); }
+
+.leaderboard-note { font-size: 0.75rem; color: var(–dim); letter-spacing: 0.15em; line-height: 2; text-align: center; padding: 2rem 0; }
+.leaderboard-note span { color: var(–red); }
+
+.counter-entry {
+display: flex; justify-content: space-between; align-items: center;
+padding: 0.8rem 0; border-bottom: 1px solid #0a0a0a;
+font-size: 0.8rem;
+}
+.counter-rank { color: var(–red); font-family: ‘Bebas Neue’, sans-serif; font-size: 1.2rem; width: 40px; }
+.counter-name { color: var(–white); flex: 1; }
+.counter-title { color: var(–dim); font-size: 0.65rem; letter-spacing: 0.2em; }
+.counter-badge { font-size: 0.6rem; letter-spacing: 0.2em; padding: 0.2rem 0.6rem; border: 1px solid; }
+.badge-witness { color: #aaa; border-color: #333; }
+.badge-counter { color: #c9a84c; border-color: #c9a84c; }
+.badge-sixth { color: var(–red); border-color: var(–red); }
+
+/* NEXT CHAPTER */
+.next-chapter {
+border: 1px solid #0a0a0a;
+padding: 2rem; margin-bottom: 2.5rem; text-align: center;
+}
+.next-title { font-family: ‘Bebas Neue’, sans-serif; font-size: 1.5rem; letter-spacing: 0.2em; color: #222; margin-bottom: 0.5rem; }
+.next-progress {
+background: #0a0a0a; height: 4px; margin: 1rem 0;
+position: relative; overflow: hidden;
+}
+.next-bar {
+height: 100%; background: var(–red);
+width: 8%; /* $5.6k / $10k = 56% but show it building */
+transition: width 1s ease;
+box-shadow: 0 0 10px var(–red);
+}
+.next-text { font-size: 0.65rem; letter-spacing: 0.2em; color: #222; }
+.next-text span { color: #444; }
+
+/* FOOTER */
+.page-footer { border-top: 1px solid #0a0a0a; padding-top: 1.5rem; margin-top: 2rem; display: flex; justify-content: space-between; font-size: 0.6rem; letter-spacing: 0.2em; color: #111; flex-wrap: wrap; gap: 0.5rem; }
+</style>
+
+</head>
+<body>
+<div class="page">
+
+  <div class="top-bar">
+    <span>// RECOUNT PRIZE CLAIM SYSTEM</span>
+    <span class="live">● CHAPTER I ACTIVE</span>
+  </div>
+
+  <div class="stamp">⬛ DECLASSIFIED — YOU ARE A COUNTER</div>
+
+  <h1 class="page-title">CLAIM<br/>YOUR<br/><span class="red">PRIZE.</span></h1>
+  <p class="page-sub">// YOU DECODED THE FIRST TRANSMISSION — THE SEVENTH WITNESS IS WATCHING</p>
+
+  <!-- TIMER -->
+
+  <div class="timer-block">
+    <div>
+      <div class="timer-label">// TIME REMAINING TO CLAIM</div>
+      <div class="timer-count" id="timerDisplay">30:00</div>
+    </div>
+    <div class="timer-note">
+      First correct submission wins 0.25 SOL<br/>
+      You must post proof on X within 30 minutes<br/>
+      or prize passes to next solver
+    </div>
+  </div>
+
+  <!-- MANIFESTO -->
+
+  <div class="manifesto">
+    <div class="manifesto-text">
+      You found what they tried to hide.<br/><br/>
+      The official count stopped at five.<br/>
+      You counted to <strong>six</strong>.<br/>
+      You decoded the transmission.<br/>
+      You are now a <span class="red">Counter</span>.<br/><br/>
+      <strong>The journey has only just begun.</strong><br/><br/>
+      The next chapter is sealed.<br/>
+      It unlocks when the count reaches <strong>$10,000</strong>.<br/>
+      Every purchase brings the truth closer.<br/>
+      Every holder is a witness.<br/><br/>
+      // <span class="red">SAVE YOUR LORE KEY: "RECOUNT THE SIXTH"</span><br/>
+      // YOU WILL NEED IT FOR THE FINAL DOOR.
+    </div>
+  </div>
+
+  <!-- PRIZES -->
+
+  <div class="prizes">
+    <div class="prize-card">
+      <div class="prize-rank">// 1ST SOLVER</div>
+      <span class="prize-amount gold">0.25 SOL</span>
+      <div class="prize-note">~$32 • FIRST PLACE</div>
+    </div>
+    <div class="prize-card">
+      <div class="prize-rank">// 2ND SOLVER</div>
+      <span class="prize-amount silver">0.10 SOL</span>
+      <div class="prize-note">~$13 • SECOND PLACE</div>
+    </div>
+    <div class="prize-card">
+      <div class="prize-rank">// 3RD SOLVER</div>
+      <span class="prize-amount bronze">0.05 SOL</span>
+      <div class="prize-note">~$6 • THIRD PLACE</div>
+    </div>
+  </div>
+
+  <!-- HOW TO CLAIM -->
+
+  <div class="instructions">
+    <div class="inst-title">// HOW TO CLAIM YOUR PRIZE</div>
+    <div class="inst-step">1. <span>Post your solution on X</span> — tag @recountonsol</div>
+    <div class="inst-step">2. <span>Screenshot your RECOUNT holdings</span> — include in your post</div>
+    <div class="inst-step">3. <span>Submit your claim below</span> — within 30 minutes</div>
+    <div class="inst-step">4. <span>The Sixth verifies</span> — prize sent on-chain publicly</div>
+    <div class="inst-step">5. <span>Your name enters the Hall of the Sixth</span> — forever</div>
+  </div>
+
+  <!-- CLAIM FORM -->
+
+  <div class="claim-form">
+    <div class="form-group">
+      <label class="form-label">// YOUR X HANDLE</label>
+      <input type="text" class="form-input" id="xHandle" placeholder="@yourusername"/>
+      <div class="form-note">// must match the account that posts proof on X</div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">// YOUR SOLANA WALLET ADDRESS</label>
+      <input type="text" class="form-input" id="walletAddr" placeholder="Your Solana wallet address..."/>
+      <div class="form-note">// prize will be sent directly to this wallet on-chain</div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">// YOUR DECODED ANSWER</label>
+      <input type="text" class="form-input" id="solution" placeholder="Enter your solution..."/>
+      <div class="form-note">// include your lore key</div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">// LINK TO YOUR X POST WITH PROOF</label>
+      <input type="text" class="form-input" id="xPost" placeholder="https://x.com/..."/>
+      <div class="form-note">// must show your solution + RECOUNT holdings screenshot</div>
+    </div>
+    <button class="submit-btn" onclick="submitClaim()">SUBMIT CLAIM — THE SIXTH IS WATCHING</button>
+    <div class="success-msg" id="successMsg">
+      // TRANSMISSION RECEIVED<br/>
+      // THE SIXTH WITNESS WILL VERIFY WITHIN 30 MINUTES<br/>
+      // WATCH @recountonsol ON X FOR WINNER ANNOUNCEMENT<br/>
+      // YOUR LORE KEY HAS BEEN RECORDED
+    </div>
+  </div>
+
+  <!-- LEADERBOARD -->
+
+  <div class="leaderboard">
+    <div class="leaderboard-note">
+      <span>// THE HALL OF THE SIXTH IS EMPTY</span><br/><br/>
+      No one has solved the count yet.<br/>
+      Be the first. Claim your place in history.<br/>
+      Your name will live here forever.<br/><br/>
+      // winners added manually after verification
+    </div>
+  </div>
+
+  <!-- NEXT CHAPTER TEASER -->
+
+  <div class="next-chapter">
+    <div class="next-title">// CHAPTER II — THE WITNESS — LOCKED</div>
+    <div class="next-progress">
+      <div class="next-bar" id="progressBar"></div>
+    </div>
+    <div class="next-text">
+      <span>$5,600 / $10,000</span> — next chapter unlocks at $10k market cap<br/>
+      every purchase brings the next truth closer
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>CASE: 9BSY-1134-6749</span>
+    <span>03.13.26</span>
+    <span>CHAPTER I ACTIVE</span>
+    <span>// THE COUNT NEVER STOPS</span>
+  </div>
+
+</div>
+
+<script>
+// TIMER - starts from 30 minutes
+let timeLeft = 30 * 60;
+const timerEl = document.getElementById('timerDisplay');
+
+function updateTimer() {
+  if (timeLeft <= 0) {
+    timerEl.textContent = 'EXPIRED';
+    timerEl.style.color = '#ff0000';
+    return;
+  }
+  const mins = Math.floor(timeLeft / 60);
+  const secs = timeLeft % 60;
+  timerEl.textContent = `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
+  if (timeLeft <= 300) timerEl.style.color = '#ff0000';
+  timeLeft--;
+  setTimeout(updateTimer, 1000);
+}
+updateTimer();
+
+// PROGRESS BAR
+setTimeout(() => {
+  document.getElementById('progressBar').style.width = '56%';
+}, 500);
+
+// FORM SUBMISSION via Google Forms
+function submitClaim() {
+  const xHandle = document.getElementById('xHandle').value.trim();
+  const wallet = document.getElementById('walletAddr').value.trim();
+  const solution = document.getElementById('solution').value.trim();
+  const xPost = document.getElementById('xPost').value.trim();
+
+  if (!xHandle || !wallet || !solution) {
+    alert('// ALL FIELDS REQUIRED — THE SIXTH SEES EVERYTHING');
+    return;
+  }
+
+  // Build Google Form URL - pre-filled
+  // Replace entry IDs with actual Google Form field IDs after creating the form
+  const formUrl = `https://docs.google.com/forms/d/e/REPLACE_WITH_YOUR_FORM_ID/formResponse?` +
+    `entry.FIELD1=${encodeURIComponent(xHandle)}&` +
+    `entry.FIELD2=${encodeURIComponent(wallet)}&` +
+    `entry.FIELD3=${encodeURIComponent(solution)}&` +
+    `entry.FIELD4=${encodeURIComponent(xPost)}&` +
+    `entry.FIELD5=${encodeURIComponent(new Date().toISOString())}`;
+
+  // Send to Google Forms silently
+  fetch(formUrl, { method: 'POST', mode: 'no-cors' })
+    .catch(() => {});
+
+  // Also send to email via formspree
+  const emailData = {
+    xHandle, wallet, solution, xPost,
+    timestamp: new Date().toISOString(),
+    _replyto: 'thesixthwitness@gmail.com',
+    _subject: `RECOUNT CLAIM: ${xHandle} — ${new Date().toLocaleTimeString()}`
+  };
+
+  fetch('https://formspree.io/f/mbdzabze', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(emailData)
+  }).catch(() => {});
+
+  document.getElementById('successMsg').style.display = 'block';
+  document.querySelector('.submit-btn').disabled = true;
+  document.querySelector('.submit-btn').textContent = 'CLAIM SUBMITTED';
+  document.querySelector('.submit-btn').style.background = '#003300';
+}
+</script>
+
+</body>
+</html>
