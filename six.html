@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>RECOUNT — CHAPTER I: THE HAND</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Bebas+Neue&family=Special+Elite&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --green: #00ff41;
+  --dark-green: #003308;
+  --black: #000000;
+  --dim: #006614;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--black);
+  color: var(--green);
+  font-family: 'Share Tech Mono', monospace;
+  min-height: 100vh;
+  overflow-x: hidden;
+  cursor: crosshair;
+}
+
+/* SCANLINES */
+body::after {
+content: ‘’;
+position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,65,0.015) 2px, rgba(0,255,65,0.015) 4px);
+pointer-events: none; z-index: 999;
+animation: flicker 8s ease-in-out infinite;
+}
+@keyframes flicker {
+0%,100%{opacity:1;}
+92%{opacity:1;}93%{opacity:0.7;}94%{opacity:1;}
+97%{opacity:0.8;}98%{opacity:1;}
+}
+
+/* GRID */
+body::before {
+content: ‘’;
+position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+background-image: linear-gradient(rgba(0,255,65,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,65,0.03) 1px, transparent 1px);
+background-size: 50px 50px;
+pointer-events: none; z-index: 0;
+}
+
+.page { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; padding: 3rem 2rem; }
+
+/* HEADER */
+.top-bar {
+display: flex; justify-content: space-between; align-items: center;
+border-bottom: 1px solid var(–dim);
+padding-bottom: 1rem; margin-bottom: 3rem;
+font-size: 0.65rem; letter-spacing: 0.3em; color: var(–dim);
+}
+.top-bar .blink { animation: blink 1.5s step-end infinite; }
+@keyframes blink { 0%,100%{opacity:1;}50%{opacity:0;} }
+
+/* PROGRESS */
+.progress-bar {
+display: flex; gap: 0; margin-bottom: 3rem;
+border: 1px solid var(–dim);
+}
+.progress-seg {
+flex: 1; height: 4px;
+background: var(–dark-green);
+transition: background 0.3s;
+}
+.progress-seg.active { background: var(–green); box-shadow: 0 0 10px var(–green); }
+.progress-seg.complete { background: var(–dim); }
+
+/* CHAPTER HEADER */
+.chapter-tag {
+font-size: 0.65rem; letter-spacing: 0.5em; color: var(–dim);
+margin-bottom: 0.5rem;
+}
+.chapter-title {
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: clamp(3rem, 8vw, 6rem);
+letter-spacing: 0.05em; line-height: 0.9;
+color: var(–green);
+text-shadow: 0 0 30px rgba(0,255,65,0.4);
+margin-bottom: 0.5rem;
+}
+.chapter-sub {
+font-size: 0.7rem; letter-spacing: 0.3em; color: var(–dim);
+margin-bottom: 3rem;
+}
+
+/* TRANSMISSION */
+.transmission {
+border: 1px solid var(–dim);
+background: rgba(0,255,65,0.03);
+padding: 2rem; margin-bottom: 2.5rem;
+position: relative;
+}
+.transmission::before {
+content: attr(data-label);
+position: absolute; top: -0.6rem; left: 1.5rem;
+background: var(–black); padding: 0 0.5rem;
+font-size: 0.6rem; letter-spacing: 0.3em; color: var(–green);
+}
+.transmission-text {
+font-family: ‘Special Elite’, cursive;
+font-size: 1rem; line-height: 2.2; color: #aaa;
+}
+.transmission-text strong { color: var(–green); }
+.transmission-text .highlight { color: var(–green); font-family: ‘Share Tech Mono’, monospace; }
+
+/* REDACTED */
+.redacted {
+background: var(–green); color: var(–green);
+cursor: pointer; padding: 0 0.3rem;
+transition: all 0.4s; display: inline;
+position: relative;
+}
+.redacted::after {
+content: attr(data-reveal);
+position: absolute; top: 0; left: 0;
+color: var(–black); background: var(–green);
+white-space: nowrap; pointer-events: none;
+opacity: 0; transition: opacity 0.3s;
+}
+.redacted:hover { background: transparent; color: #fff; }
+.redacted:hover::after { opacity: 0; }
+
+/* BINARY PUZZLE */
+.puzzle-block {
+border: 1px solid rgba(0,255,65,0.4);
+background: rgba(0,255,65,0.02);
+padding: 2rem; margin-bottom: 2.5rem;
+position: relative;
+}
+.puzzle-block::before {
+content: attr(data-label);
+position: absolute; top: -0.6rem; left: 1.5rem;
+background: var(–black); padding: 0 0.5rem;
+font-size: 0.6rem; letter-spacing: 0.3em; color: rgba(0,255,65,0.6);
+}
+
+.binary-display {
+font-size: 0.8rem; line-height: 2.2; letter-spacing: 0.15em;
+color: rgba(0,255,65,0.6); word-break: break-all;
+margin-bottom: 1.5rem;
+}
+.binary-display span {
+cursor: pointer; transition: color 0.1s;
+display: inline;
+}
+.binary-display span:hover { color: var(–green); }
+
+.hint-text {
+font-size: 0.7rem; color: var(–dim); letter-spacing: 0.15em;
+line-height: 1.8; border-left: 2px solid var(–dim);
+padding-left: 1rem; margin-bottom: 1.5rem;
+}
+.hint-text span { color: var(–green); }
+
+/* INPUT */
+.input-wrap { display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+.input-label { font-size: 0.65rem; letter-spacing: 0.4em; color: var(–dim); }
+.code-input {
+background: transparent; border: 1px solid var(–green);
+color: var(–green); font-family: ‘Share Tech Mono’, monospace;
+font-size: 1.4rem; letter-spacing: 0.4em; padding: 1rem 2rem;
+text-align: center; width: 100%; max-width: 380px; outline: none;
+text-transform: uppercase;
+transition: all 0.2s;
+}
+.code-input:focus { box-shadow: 0 0 25px rgba(0,255,65,0.3); }
+.code-input.wrong { border-color: #ff0000; color: #ff0000; animation: shake 0.4s ease; }
+@keyframes shake { 0%,100%{transform:translateX(0);}25%{transform:translateX(-8px);}75%{transform:translateX(8px);} }
+
+.submit-btn {
+background: transparent; border: 1px solid var(–green);
+color: var(–green); font-family: ‘Bebas Neue’, sans-serif;
+font-size: 1.1rem; letter-spacing: 0.4em;
+padding: 0.8rem 3rem; cursor: pointer;
+transition: all 0.2s; clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+}
+.submit-btn:hover { background: rgba(0,255,65,0.1); box-shadow: 0 0 20px rgba(0,255,65,0.2); }
+
+.error-msg {
+font-size: 0.7rem; letter-spacing: 0.2em; color: #ff0000;
+display: none; text-align: center;
+}
+
+/* PRIZE */
+.prize-strip {
+border: 1px solid rgba(0,255,65,0.2);
+background: rgba(0,255,65,0.02);
+padding: 1.5rem; margin-bottom: 2.5rem;
+display: flex; justify-content: space-between; align-items: center;
+flex-wrap: wrap; gap: 1rem;
+}
+.prize-item { text-align: center; }
+.prize-val {
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: 1.8rem; color: var(–green);
+text-shadow: 0 0 15px rgba(0,255,65,0.4);
+display: block;
+}
+.prize-lbl { font-size: 0.6rem; letter-spacing: 0.2em; color: var(–dim); }
+.prize-div { width: 1px; height: 40px; background: var(–dim); }
+
+/* LORE KEY */
+.lore-key-block {
+border: 1px solid rgba(0,255,65,0.15);
+padding: 1.5rem; margin-bottom: 2.5rem;
+text-align: center; position: relative;
+}
+.lore-key-block::before {
+content: ‘// LORE KEY — SAVE THIS — YOU WILL NEED IT’;
+position: absolute; top: -0.6rem; left: 1.5rem;
+background: var(–black); padding: 0 0.5rem;
+font-size: 0.6rem; letter-spacing: 0.3em; color: rgba(0,255,65,0.4);
+}
+.lore-key {
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: 2.5rem; letter-spacing: 0.4em; color: var(–dim);
+filter: blur(8px); transition: filter 0.3s;
+cursor: pointer; user-select: none;
+}
+.lore-key:hover { filter: blur(0); color: var(–green); }
+.lore-key-hint { font-size: 0.6rem; letter-spacing: 0.2em; color: #111; margin-top: 0.5rem; }
+
+/* FOOTER */
+.page-footer {
+border-top: 1px solid var(–dark-green);
+padding-top: 1.5rem; margin-top: 3rem;
+display: flex; justify-content: space-between;
+font-size: 0.6rem; letter-spacing: 0.2em; color: #111;
+flex-wrap: wrap; gap: 0.5rem;
+}
+
+/* SUCCESS STATE */
+.success-overlay {
+display: none;
+position: fixed; inset: 0; background: rgba(0,0,0,0.95);
+z-index: 1000; flex-direction: column;
+align-items: center; justify-content: center;
+text-align: center; padding: 2rem;
+}
+.success-overlay.show { display: flex; }
+.success-title {
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: clamp(3rem, 8vw, 6rem);
+color: var(–green); letter-spacing: 0.1em;
+text-shadow: 0 0 40px rgba(0,255,65,0.6);
+animation: pulse-glow 1s ease-in-out infinite;
+margin-bottom: 1rem;
+}
+@keyframes pulse-glow { 0%,100%{text-shadow:0 0 40px rgba(0,255,65,0.6);}50%{text-shadow:0 0 80px rgba(0,255,65,0.9);} }
+.success-text { font-family: ‘Special Elite’, cursive; font-size: 1rem; color: #aaa; line-height: 2; max-width: 500px; margin-bottom: 2rem; }
+.success-next {
+font-family: ‘Bebas Neue’, sans-serif; font-size: 1rem; letter-spacing: 0.3em;
+color: var(–green); border: 1px solid var(–green); padding: 0.8rem 2rem;
+cursor: pointer; background: transparent; transition: all 0.2s;
+clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+}
+.success-next:hover { background: rgba(0,255,65,0.1); }
+</style>
+
+</head>
+<body>
+
+<div class="page">
+
+  <!-- TOP BAR -->
+
+  <div class="top-bar">
+    <span>// RECOUNT TRANSMISSION SYSTEM v1.0</span>
+    <span>CHAPTER I OF ██</span>
+    <span class="blink">● ACTIVE</span>
+  </div>
+
+  <!-- PROGRESS -->
+
+  <div class="progress-bar">
+    <div class="progress-seg active"></div>
+    <div class="progress-seg"></div>
+    <div class="progress-seg"></div>
+    <div class="progress-seg"></div>
+    <div class="progress-seg"></div>
+  </div>
+
+  <!-- CHAPTER HEADER -->
+
+  <div class="chapter-tag">// CHAPTER I — THE HAND</div>
+  <h1 class="chapter-title">YOU<br/>COUNTED<br/>RIGHT.</h1>
+  <p class="chapter-sub">// MOST PEOPLE STOP AT FIVE — YOU DIDN'T — THAT'S WHY YOU'RE HERE</p>
+
+  <!-- NARRATIVE -->
+
+  <div class="transmission" data-label="// INTERCEPTED — THE SIXTH SPEAKS">
+    <div class="transmission-text">
+      They said there were <strong>five</strong>.<br/>
+      There have always been <strong>six</strong>.<br/><br/>
+      The official record was <span class="redacted" data-reveal="sealed">████████</span> before anyone finished counting.<br/>
+      The <span class="redacted" data-reveal="seventh witness">██████████ ███████</span> was never called.<br/>
+      The files were <span class="redacted" data-reveal="classified">██████████</span> before the count reached the truth.<br/><br/>
+      Someone has been leaving breadcrumbs.<br/>
+      You found the first one.<br/><br/>
+      <strong>The hand was not an accident.</strong><br/>
+      Nothing ever is.<br/><br/>
+      Decode what follows.<br/>
+      The answer opens the next door.<br/>
+      Save what you find.<br/>
+      <span class="highlight">// YOU WILL NEED IT AT THE END.</span>
+    </div>
+  </div>
+
+  <!-- PRIZES -->
+
+  <div class="prize-strip">
+    <div class="prize-item">
+      <span class="prize-val">0.25 SOL</span>
+      <span class="prize-lbl">1ST SOLVER TODAY</span>
+    </div>
+    <div class="prize-div"></div>
+    <div class="prize-item">
+      <span class="prize-val">0.1 SOL</span>
+      <span class="prize-lbl">2ND SOLVER</span>
+    </div>
+    <div class="prize-div"></div>
+    <div class="prize-item">
+      <span class="prize-val">0.05 SOL</span>
+      <span class="prize-lbl">3RD SOLVER</span>
+    </div>
+    <div class="prize-div"></div>
+    <div class="prize-item">
+      <span class="prize-val">30 MIN</span>
+      <span class="prize-lbl">TO CLAIM OR NEXT WINS</span>
+    </div>
+  </div>
+
+  <!-- PUZZLE -->
+
+  <div class="puzzle-block" data-label="// TRANSMISSION 001 — DECODE TO PROCEED">
+    <div class="binary-display">
+      <span>01010010</span> <span>01000101</span> <span>01000011</span> <span>01001111</span><br/>
+      <span>01010101</span> <span>01001110</span> <span>01010100</span> <span>00100000</span><br/>
+      <span>01110100</span> <span>01101000</span> <span>01100101</span> <span>00100000</span><br/>
+      <span>01110011</span> <span>01101001</span> <span>01111000</span> <span>01110100</span><br/>
+      <span>01101000</span> <span>00100000</span> <span>01101011</span> <span>01101110</span><br/>
+      <span>01101111</span> <span>01110111</span> <span>01110011</span>
+    </div>
+
+```
+<div class="hint-text">
+  // EACH GROUP OF 8 DIGITS = ONE CHARACTER<br/>
+  // BINARY IS THE LANGUAGE THEY USE WHEN WORDS ARE TOO DANGEROUS<br/>
+  // <span>DECODE THE FIRST TWO WORDS ONLY</span> — THE REST IS FOR LATER<br/>
+  // TOOLS: search "binary to text converter" — the answer is two words
+</div>
+
+<div class="input-wrap">
+  <span class="input-label">// ENTER THE FIRST TWO DECODED WORDS</span>
+  <input type="text" class="code-input" id="codeInput" placeholder="_ _ _ _ _ _ _   _ _ _"/>
+  <button class="submit-btn" onclick="checkCode()">VERIFY TRANSMISSION</button>
+  <p class="error-msg" id="errorMsg">// INCORRECT — THE COUNT IS WRONG — DECODE AGAIN</p>
+</div>
+```
+
+  </div>
+
+  <!-- LORE KEY (hidden until solved) -->
+
+  <div class="lore-key-block" id="loreKeyBlock" style="display:none;">
+    <div class="lore-key" id="loreKey" title="hover to reveal">RECOUNT THE SIXTH</div>
+    <div class="lore-key-hint">// hover to reveal your lore key — save it — you will need it for the final puzzle</div>
+  </div>
+
+  <!-- FOOTER -->
+
+  <div class="page-footer">
+    <span>CASE: 9BSY-1134-6749</span>
+    <span>03.13.26</span>
+    <span>CHAPTER I OF ██</span>
+    <span>// THE COUNT NEVER STOPS</span>
+  </div>
+
+</div>
+
+<!-- SUCCESS OVERLAY -->
+
+<div class="success-overlay" id="successOverlay">
+  <div class="success-title">DECODED.</div>
+  <div class="success-text">
+    You found the first truth.<br/><br/>
+    <strong>LORE KEY UNLOCKED: "RECOUNT THE SIXTH"</strong><br/><br/>
+    Save this. Write it down. Screenshot it.<br/>
+    You will need it for the final door.<br/><br/>
+    The next chapter unlocks when the count reaches $10,000.<br/>
+    Watch the market cap. Watch the count.<br/><br/>
+    To claim your prize — post your solution on X.<br/>
+    Tag @recountonsol. Show your RECOUNT holdings.<br/>
+    You have <strong>30 minutes</strong> from now.<br/><br/>
+    // THE SEVENTH WITNESS IS WATCHING.
+  </div>
+  <button class="success-next" onclick="claimPrize()">CLAIM YOUR PRIZE →</button>
+</div>
+
+<script>
+const CORRECT_ANSWERS = ['RECOUNT THE SIXTH', 'RECOUNTTHESIXTH', 'RECOUNT THE SIXTH KNOWS'];
+
+function checkCode() {
+  const input = document.getElementById('codeInput').value.trim().toUpperCase();
+  const error = document.getElementById('errorMsg');
+  const inputEl = document.getElementById('codeInput');
+
+  if (CORRECT_ANSWERS.includes(input) || input === 'RECOUNT' || input.startsWith('RECOUNT')) {
+    document.getElementById('successOverlay').classList.add('show');
+    document.getElementById('loreKeyBlock').style.display = 'block';
+  } else {
+    inputEl.classList.add('wrong');
+    error.style.display = 'block';
+    setTimeout(() => {
+      inputEl.classList.remove('wrong');
+      error.style.display = 'none';
+    }, 3000);
+  }
+}
+
+function claimPrize() {
+  window.location.href = 'witness.html';
+}
+
+document.getElementById('codeInput').addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') checkCode();
+});
+</script>
+
+</body>
+</html>
