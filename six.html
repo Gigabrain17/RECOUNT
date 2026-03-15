@@ -163,12 +163,13 @@ padding-left: 1rem; margin-bottom: 1.5rem;
 .input-wrap { display: flex; flex-direction: column; align-items: center; gap: 1rem; }
 .input-label { font-size: 0.65rem; letter-spacing: 0.4em; color: var(–dim); }
 .code-input {
-background: transparent; border: 1px solid var(–green);
-color: var(–green); font-family: ‘Share Tech Mono’, monospace;
+background: rgba(0,255,65,0.1); border: 1px solid var(–green);
+color: #ffffff; font-family: ‘Share Tech Mono’, monospace;
 font-size: 1.4rem; letter-spacing: 0.4em; padding: 1rem 2rem;
 text-align: center; width: 100%; max-width: 380px; outline: none;
 text-transform: uppercase;
 transition: all 0.2s;
+caret-color: var(–green);
 }
 .code-input:focus { box-shadow: 0 0 25px rgba(0,255,65,0.3); }
 .code-input.wrong { border-color: #ff0000; color: #ff0000; animation: shake 0.4s ease; }
